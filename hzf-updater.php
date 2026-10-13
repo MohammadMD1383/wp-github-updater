@@ -3,7 +3,7 @@
  * Plugin Name:       HZF Updater
  * Plugin URI:        https://github.com/MohammadMD1383/wp-github-updater
  * Description:       Updates our own plugins and themes from private GitHub Releases. Opt in with an "Update URI: https://github.com/<org>/<repo>" header.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.1
  * Requires PHP:      7.4
  * Author:            HZF

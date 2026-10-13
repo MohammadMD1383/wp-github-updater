@@ -14,7 +14,15 @@ defined( 'ABSPATH' ) || exit;
 final class HZF_Updater {
 
 	const OPTION       = 'hzf_updater_state';
+	const SETTINGS     = 'hzf_updater_settings';
 	const DEFAULT_BASE = 'https://api.github.com';
+
+	/**
+	 * Decrypted saved token, per request.
+	 *
+	 * @var string|null
+	 */
+	private static $plain = null;
 
 	/**
 	 * Register hooks.
@@ -52,21 +60,144 @@ final class HZF_Updater {
 	}
 
 	/**
-	 * The token, from wp-config.php only.
+	 * Read a network-wide option; never autoloaded.
+	 *
+	 * @param string $name Option name.
+	 * @return array
+	 */
+	private static function get( $name ) {
+		return (array) ( is_multisite() ? get_site_option( $name, array() ) : get_option( $name, array() ) );
+	}
+
+	/**
+	 * Write a network-wide option; never autoloaded.
+	 *
+	 * @param string $name  Option name.
+	 * @param array  $value Value.
+	 */
+	private static function put( $name, $value ) {
+		if ( is_multisite() ) {
+			update_site_option( $name, $value );
+		} else {
+			update_option( $name, $value, false );
+		}
+	}
+
+	/**
+	 * Settings from the admin page: `token` (encrypted), `ttl` (hours), `api_base`.
+	 *
+	 * @return array
+	 */
+	public static function settings() {
+		return wp_parse_args(
+			self::get( self::SETTINGS ),
+			array(
+				'token'    => '',
+				'ttl'      => 6,
+				'api_base' => '',
+			)
+		);
+	}
+
+	/**
+	 * Save settings and make every repo due for a re-check.
+	 *
+	 * @param array $settings Settings (see settings()).
+	 */
+	public static function save_settings( $settings ) {
+		self::put( self::SETTINGS, $settings );
+		self::$plain = null;
+		self::clear_cache();
+	}
+
+	/**
+	 * Encryption key for the stored token, derived from the site's salts.
+	 *
+	 * @return string 32 raw bytes.
+	 */
+	private static function secret() {
+		$auth = defined( 'AUTH_KEY' ) ? AUTH_KEY : '';
+		$salt = defined( 'AUTH_SALT' ) ? AUTH_SALT : '';
+		return sodium_crypto_generichash( 'hzf-updater|' . $auth . '|' . $salt, '', SODIUM_CRYPTO_SECRETBOX_KEYBYTES );
+	}
+
+	/**
+	 * Encrypt a token for storage.
+	 *
+	 * @param string $token Plain token.
+	 * @return string|false Ciphertext, or false when sodium is unavailable.
+	 */
+	public static function encrypt( $token ) {
+		if ( ! function_exists( 'sodium_crypto_secretbox' ) ) {
+			return false;
+		}
+		$nonce = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+		return base64_encode( $nonce . sodium_crypto_secretbox( $token, $nonce, self::secret() ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Binary to text, not obfuscation.
+	}
+
+	/**
+	 * Decrypt the stored token.
+	 *
+	 * @return string Empty string when none is stored or it cannot be decrypted.
+	 */
+	private static function stored_token() {
+		if ( null === self::$plain ) {
+			self::$plain = self::decrypt( self::settings()['token'] );
+		}
+		return self::$plain;
+	}
+
+	/**
+	 * Decrypt a stored token.
+	 *
+	 * @param mixed $stored Ciphertext.
+	 * @return string Empty string when it cannot be decrypted.
+	 */
+	private static function decrypt( $stored ) {
+		if ( ! is_string( $stored ) || '' === $stored || ! function_exists( 'sodium_crypto_secretbox_open' ) ) {
+			return '';
+		}
+		$raw = base64_decode( $stored, true ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding our own storage format.
+		if ( false === $raw || strlen( $raw ) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ) {
+			return '';
+		}
+		$plain = sodium_crypto_secretbox_open( substr( $raw, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ), substr( $raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ), self::secret() );
+		return false === $plain ? '' : $plain;
+	}
+
+	/**
+	 * Where the token comes from: `constant`, `settings` or ''.
+	 *
+	 * @return string
+	 */
+	public static function token_source() {
+		if ( defined( 'HZF_UPDATER_GITHUB_TOKEN' ) && is_string( HZF_UPDATER_GITHUB_TOKEN ) && '' !== trim( HZF_UPDATER_GITHUB_TOKEN ) ) {
+			return 'constant';
+		}
+		return '' !== self::stored_token() ? 'settings' : '';
+	}
+
+	/**
+	 * The token: the optional wp-config.php constant wins over the saved one.
 	 *
 	 * @return string
 	 */
 	public static function token() {
-		return defined( 'HZF_UPDATER_GITHUB_TOKEN' ) && is_string( HZF_UPDATER_GITHUB_TOKEN ) ? trim( HZF_UPDATER_GITHUB_TOKEN ) : '';
+		$source = self::token_source();
+		if ( 'constant' === $source ) {
+			return trim( HZF_UPDATER_GITHUB_TOKEN );
+		}
+		return 'settings' === $source ? self::stored_token() : '';
 	}
 
 	/**
-	 * Fetch base URL (filterable, e.g. to point at a proxy that holds the token).
+	 * Fetch base URL: the setting, else GitHub (filterable, e.g. for a proxy that holds the token).
 	 *
 	 * @return string
 	 */
 	public static function base() {
-		return untrailingslashit( (string) apply_filters( 'hzf_updater_api_base', self::DEFAULT_BASE ) );
+		$base = self::settings()['api_base'];
+		return untrailingslashit( (string) apply_filters( 'hzf_updater_api_base', $base ? $base : self::DEFAULT_BASE ) );
 	}
 
 	/**
@@ -96,7 +227,7 @@ final class HZF_Updater {
 	 * @return array
 	 */
 	public static function state() {
-		return (array) get_site_option( self::OPTION, array() );
+		return self::get( self::OPTION );
 	}
 
 	/**
@@ -108,7 +239,7 @@ final class HZF_Updater {
 			$state[ $repo ]['checked'] = 0;
 			$state[ $repo ]['backoff'] = 0;
 		}
-		update_site_option( self::OPTION, $state );
+		self::put( self::OPTION, $state );
 	}
 
 	/**
@@ -297,7 +428,7 @@ final class HZF_Updater {
 		);
 		$old   = isset( $state[ $repo ] ) ? $state[ $repo ] : null;
 		$now   = time();
-		$ttl   = (int) apply_filters( 'hzf_updater_cache_ttl', 6 * HOUR_IN_SECONDS, $repo );
+		$ttl   = (int) apply_filters( 'hzf_updater_cache_ttl', max( 1, (int) self::settings()['ttl'] ) * HOUR_IN_SECONDS, $repo );
 		$due   = ! $entry['release'] || $entry['checked'] + $ttl <= $now;
 
 		if ( $due && $entry['backoff'] <= $now && self::can_fetch() && ! self::token_missing() ) {
@@ -305,7 +436,7 @@ final class HZF_Updater {
 		}
 		if ( $entry !== $old ) {
 			$state[ $repo ] = $entry;
-			update_site_option( self::OPTION, $state );
+			self::put( self::OPTION, $state );
 		}
 		return $entry['release'];
 	}
@@ -566,7 +697,7 @@ final class HZF_Updater {
 					'latest'    => ! empty( $entry['release']['version'] ) ? $entry['release']['version'] : '',
 					'checked'   => ! empty( $entry['attempted'] ) ? (int) $entry['attempted'] : 0,
 					'code'      => ! empty( $entry['code'] ) ? (int) $entry['code'] : 0,
-					'error'     => ! empty( $entry['error'] ) ? $entry['error'] : ( self::token_missing() ? __( 'Token constant missing.', 'hzf-updater' ) : '' ),
+					'error'     => ! empty( $entry['error'] ) ? $entry['error'] : ( self::token_missing() ? __( 'No GitHub token set.', 'hzf-updater' ) : '' ),
 				);
 			}
 		}

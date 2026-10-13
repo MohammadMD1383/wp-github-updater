@@ -8,15 +8,13 @@ WordPress 6.1+ and PHP 7.4+. No Composer runtime dependencies.
 
 1. **Install** `hzf-updater.zip` (from this repo's releases) and activate it
    (network-activate on multisite). It updates itself afterwards.
-2. **Add the token** to `wp-config.php` (never to the database, never to a settings screen):
-
-   ```php
-   define( 'HZF_UPDATER_GITHUB_TOKEN', 'github_pat_...' );
-   ```
-
+2. **Paste the token** in **Tools -> HZF Updater** and click **Save and check**.
    Use a **fine-grained personal access token**, scoped to the repositories you
    update, with **Contents: Read-only** (nothing else). Add this plugin's own
    repository too if it is private.
+
+   Optional: `define( 'HZF_UPDATER_GITHUB_TOKEN', 'github_pat_...' );` in
+   `wp-config.php` overrides the saved token (handy when provisioning many sites).
 3. **Opt a package in** with one header.
 
    Plugin main file:
@@ -57,8 +55,8 @@ WordPress 6.1+ and PHP 7.4+. No Composer runtime dependencies.
 
 - Checks run on WordPress' normal update checks (admin, cron, WP-CLI) and are
   **never** made on front-end requests.
-- Each repo's latest-release response is cached for 6 hours (filter
-  `hzf_updater_cache_ttl`) in a non-autoloaded, network-wide option, and
+- Each repo's latest-release response is cached for the **Check every** setting
+  (default 6 hours; filter `hzf_updater_cache_ttl`) in a non-autoloaded, network-wide option, and
   revalidated with `ETag` / `If-None-Match`, so unchanged checks do not count
   against the rate limit. On errors or rate limits the last good data is kept
   and checks back off (exponentially, or until the rate-limit reset).
@@ -67,13 +65,15 @@ WordPress 6.1+ and PHP 7.4+. No Composer runtime dependencies.
   that URL on the API host of a managed repo; GitHub's redirect to the signed
   download URL is followed **without** it.
 - If an extracted ZIP's folder does not match the installed slug it is renamed.
-- Without the token constant, no request is sent to GitHub and an admin notice is shown.
+- Without a token, no request is sent to GitHub and an admin notice is shown.
   A 401/403 from GitHub shows a notice too.
 
 ## Admin and WP-CLI
 
 - **Tools -> HZF Updater** (multisite: **Network Admin -> Settings -> HZF Updater**):
-  installed version, latest version, last check, last error, and "Check now".
+  - Settings (administrators): GitHub token, check interval in hours, API base
+    URL (empty = GitHub; set it to use your own proxy that holds the token).
+  - Packages: installed version, latest version, last check, last error, and "Check now".
 - `wp hzf-updater status [--format=<format>]`
 - `wp hzf-updater check` clears the cache and checks now.
 - `wp plugin update --all` / `wp theme update --all` work as usual.
@@ -82,15 +82,17 @@ WordPress 6.1+ and PHP 7.4+. No Composer runtime dependencies.
 
 | Filter | Purpose |
 | --- | --- |
-| `hzf_updater_api_base` | Base URL for GitHub API calls (default `https://api.github.com`). Point it at a self-hosted proxy that holds the token; with a custom base the token constant is optional and, if defined, is sent to that base. |
-| `hzf_updater_cache_ttl` | Cache lifetime in seconds (default 6 h). |
+| `hzf_updater_api_base` | Base URL for API calls (default: the **API base URL** setting, else `https://api.github.com`). With a custom base the token is optional and, if set, is sent to that base. |
+| `hzf_updater_cache_ttl` | Cache lifetime in seconds (default: the **Check every** setting). |
 | `hzf_updater_manage_repo` | Return `false` to refuse a repo (`owner/repo`), e.g. an allow-list of organisations. |
 
 ## Security
 
-The token is read only from the constant. It is never printed in HTML, JS, REST
+The saved token is encrypted (libsodium, key derived from the site's
+`AUTH_KEY` / `AUTH_SALT`) in a non-autoloaded option, and the field is
+write-only: it is never shown again, only replaced or removed. It is never printed in HTML, JS, REST
 output, logs, error messages or `WP_Error` data, and is redacted from any stored
-or displayed request error. Uninstalling removes the stored state.
+or displayed request error. Uninstalling removes the stored state and settings.
 
 ## Development
 

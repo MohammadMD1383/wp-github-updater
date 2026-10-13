@@ -3,8 +3,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: HZF Updater 1.0.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 12:08+0000\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/app\n"
+"POT-Creation-Date: 2026-10-13T12:36:54+00:00\n"
 "PO-Revision-Date: 2026-10-13 12:00+0000\n"
 "Last-Translator: HZF\n"
 "Language-Team: Persian\n"
@@ -14,88 +14,157 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: includes/class-hzf-updater-admin.php:39
-#: includes/class-hzf-updater-admin.php:90
+#. Plugin Name of the plugin
+#: hzf-updater.php includes/class-hzf-updater-admin.php:40
+#: includes/class-hzf-updater-admin.php:169
 msgid "HZF Updater"
 msgstr "به‌روزرسان HZF"
 
-#: includes/class-hzf-updater-admin.php:53
-#: includes/class-hzf-updater-admin.php:88
+#. Plugin URI of the plugin
+#: hzf-updater.php
+msgid "https://github.com/MohammadMD1383/wp-github-updater"
+msgstr ""
+
+#. Description of the plugin
+#: hzf-updater.php
+msgid "Updates our own plugins and themes from private GitHub Releases. Opt in with an \"Update URI: https://github.com/<org>/<repo>\" header."
+msgstr "افزونه‌ها و پوسته‌های خودمان را از انتشارهای خصوصی گیت‌هاب به‌روزرسانی می‌کند. با سرآیند \"Update URI: https://github.com/<org>/<repo>\" فعال می‌شود."
+
+#. Author of the plugin
+#: hzf-updater.php
+msgid "HZF"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:54
+#: includes/class-hzf-updater-admin.php:76
+#: includes/class-hzf-updater-admin.php:167
 msgid "Sorry, you are not allowed to do this."
 msgstr "متأسفیم، شما اجازهٔ انجام این کار را ندارید."
 
-#: includes/class-hzf-updater-admin.php:69
-msgid ""
-"HZF Updater: the HZF_UPDATER_GITHUB_TOKEN constant is not defined in wp-"
-"config.php, so private GitHub releases cannot be checked."
-msgstr "به‌روزرسان HZF: ثابت HZF_UPDATER_GITHUB_TOKEN در wp-config.php تعریف نشده است، بنابراین نسخه‌های خصوصی گیت‌هاب بررسی نمی‌شوند."
+#: includes/class-hzf-updater-admin.php:109
+msgid "Settings"
+msgstr "تنظیمات"
 
-#: includes/class-hzf-updater-admin.php:73
-msgid ""
-"HZF Updater: GitHub rejected the access token (HTTP 401/403). It may have "
-"expired or lack read access to the repository contents."
+#: includes/class-hzf-updater-admin.php:113
+msgid "GitHub token"
+msgstr "توکن گیت‌هاب"
+
+#: includes/class-hzf-updater-admin.php:115
+msgid "Set by the HZF_UPDATER_GITHUB_TOKEN constant in wp-config.php, which overrides this field."
+msgstr "با ثابت HZF_UPDATER_GITHUB_TOKEN در wp-config.php تنظیم شده است که بر این فیلد اولویت دارد."
+
+#: includes/class-hzf-updater-admin.php:119
+msgid "Saved. Leave empty to keep it."
+msgstr "ذخیره شده است. برای نگه داشتن آن خالی بگذارید."
+
+#: includes/class-hzf-updater-admin.php:123
+msgid "Remove saved token"
+msgstr "حذف توکن ذخیره‌شده"
+
+#: includes/class-hzf-updater-admin.php:125
+msgid "Fine-grained personal access token with read-only Contents access to your repositories. Stored encrypted and never shown again."
+msgstr "توکن دسترسی شخصی fine-grained با دسترسی فقط‌خواندنی Contents به مخزن‌های شما. به‌صورت رمزنگاری‌شده ذخیره می‌شود و دیگر نمایش داده نمی‌شود."
+
+#: includes/class-hzf-updater-admin.php:127
+msgid "Check every"
+msgstr "بررسی هر"
+
+#: includes/class-hzf-updater-admin.php:128
+msgid "hours"
+msgstr "ساعت"
+
+#: includes/class-hzf-updater-admin.php:129
+msgid "API base URL"
+msgstr "نشانی پایه API"
+
+#: includes/class-hzf-updater-admin.php:131
+msgid "Leave empty for GitHub. Set only to use your own proxy that holds the token."
+msgstr "برای گیت‌هاب خالی بگذارید. فقط برای استفاده از پراکسی خودتان که توکن را نگه می‌دارد تنظیم کنید."
+
+#: includes/class-hzf-updater-admin.php:134
+msgid "Save and check"
+msgstr "ذخیره و بررسی"
+
+#: includes/class-hzf-updater-admin.php:148
+msgid "HZF Updater: no GitHub token is set, so private GitHub releases cannot be checked."
+msgstr "HZF Updater: توکن گیت‌هاب تنظیم نشده است، بنابراین انتشارهای خصوصی گیت‌هاب بررسی نمی‌شوند."
+
+#: includes/class-hzf-updater-admin.php:152
+msgid "HZF Updater: GitHub rejected the access token (HTTP 401/403). It may have expired or lack read access to the repository contents."
 msgstr "به‌روزرسان HZF: گیت‌هاب توکن دسترسی را رد کرد (HTTP 401/403). ممکن است منقضی شده باشد یا دسترسی خواندن به محتوای مخزن را نداشته باشد."
 
-#: includes/class-hzf-updater-admin.php:79
+#: includes/class-hzf-updater-admin.php:158
 msgid "Details"
 msgstr "جزئیات"
 
-#: includes/class-hzf-updater-admin.php:92
+#: includes/class-hzf-updater-admin.php:171
 msgid "Update check finished."
 msgstr "بررسی به‌روزرسانی پایان یافت."
 
-#: includes/class-hzf-updater-admin.php:95
+#: includes/class-hzf-updater-admin.php:175
+msgid "Settings saved and updates checked."
+msgstr "تنظیمات ذخیره و به‌روزرسانی‌ها بررسی شد."
+
+#: includes/class-hzf-updater-admin.php:177
+msgid "The token could not be encrypted on this server (the sodium extension is missing). Define HZF_UPDATER_GITHUB_TOKEN in wp-config.php instead."
+msgstr "توکن روی این سرور رمزنگاری نشد (افزونه sodium نصب نیست). به‌جای آن HZF_UPDATER_GITHUB_TOKEN را در wp-config.php تعریف کنید."
+
+#: includes/class-hzf-updater-admin.php:180
+msgid "Packages"
+msgstr "بسته‌ها"
+
+#: includes/class-hzf-updater-admin.php:182
 msgid "Package"
 msgstr "بسته"
 
-#: includes/class-hzf-updater-admin.php:95
+#: includes/class-hzf-updater-admin.php:182
 msgid "Repository"
 msgstr "مخزن"
 
-#: includes/class-hzf-updater-admin.php:95
+#: includes/class-hzf-updater-admin.php:182
 msgid "Installed"
 msgstr "نصب‌شده"
 
-#: includes/class-hzf-updater-admin.php:95
+#: includes/class-hzf-updater-admin.php:182
 msgid "Latest"
 msgstr "آخرین"
 
-#: includes/class-hzf-updater-admin.php:95
+#: includes/class-hzf-updater-admin.php:182
 msgid "Last check"
 msgstr "آخرین بررسی"
 
-#: includes/class-hzf-updater-admin.php:95
+#: includes/class-hzf-updater-admin.php:182
 msgid "Last error"
 msgstr "آخرین خطا"
 
-#: includes/class-hzf-updater-admin.php:100
-msgid "Token constant missing."
-msgstr "ثابت توکن تعریف نشده است."
-
-#: includes/class-hzf-updater-admin.php:104
+#: includes/class-hzf-updater-admin.php:190
 msgid "plugin"
 msgstr "افزونه"
 
-#: includes/class-hzf-updater-admin.php:104
+#: includes/class-hzf-updater-admin.php:190
 msgid "theme"
 msgstr "پوسته"
 
-#: includes/class-hzf-updater-admin.php:117
+#: includes/class-hzf-updater-admin.php:203
 msgid "Check now"
 msgstr "هم‌اکنون بررسی کن"
 
 #. translators: %d: HTTP status code.
-#: includes/class-hzf-updater.php:330
+#: includes/class-hzf-updater.php:480
 #, php-format
 msgid "GitHub returned HTTP %d."
 msgstr "گیت‌هاب کد HTTP %d را برگرداند."
 
-#: includes/class-hzf-updater.php:338
-msgid ""
-"The latest release is a draft, a prerelease or has no usable version tag."
+#: includes/class-hzf-updater.php:488
+msgid "The latest release is a draft, a prerelease or has no usable version tag."
 msgstr "آخرین نسخه پیش‌نویس یا پیش‌انتشار است یا برچسب نسخهٔ قابل‌استفاده ندارد."
 
-#: includes/class-hzf-updater.php:511
+#: includes/class-hzf-updater.php:663
 msgid "Could not rename the extracted package folder."
 msgstr "تغییر نام پوشهٔ استخراج‌شدهٔ بسته ممکن نشد."
+
+#: includes/class-hzf-updater.php:700
+msgid "No GitHub token set."
+msgstr "توکن گیت‌هاب تنظیم نشده است."
+
 

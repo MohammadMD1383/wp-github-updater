@@ -7,7 +7,7 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-delete_site_option( 'hzf_updater_state' );
-if ( is_multisite() ) {
-	delete_option( 'hzf_updater_state' );
+foreach ( array( 'hzf_updater_state', 'hzf_updater_settings' ) as $hzf_updater_option ) {
+	delete_site_option( $hzf_updater_option );
+	delete_option( $hzf_updater_option );
 }

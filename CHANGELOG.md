@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.0]
+
+### Added
+- Settings on Tools -> HZF Updater: GitHub token (stored encrypted, write-only), check interval, API base URL. The `HZF_UPDATER_GITHUB_TOKEN` constant is now optional and overrides the saved token.
+
+### Changed
+- Stored state and settings are never autoloaded on single sites either.
+
 ## [1.0.0]
 
 ### Added

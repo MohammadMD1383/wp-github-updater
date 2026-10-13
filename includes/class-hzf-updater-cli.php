@@ -30,7 +30,7 @@ final class HZF_Updater_CLI {
 			$rows[]         = $row;
 		}
 		if ( HZF_Updater::token_missing() ) {
-			WP_CLI::warning( 'HZF_UPDATER_GITHUB_TOKEN is not defined in wp-config.php.' );
+			WP_CLI::warning( 'No GitHub token is set (Tools -> HZF Updater).' );
 		}
 		WP_CLI\Utils\format_items( isset( $assoc_args['format'] ) ? $assoc_args['format'] : 'table', $rows, array( 'type', 'slug', 'repo', 'installed', 'latest', 'checked', 'error' ) );
 	}
