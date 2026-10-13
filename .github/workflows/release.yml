@@ -1,0 +1,45 @@
+name: Release
+
+# Push a tag equal to the plugin version (v1.2.3 or 1.2.3) to publish a release
+# with the hzf-updater.zip asset that the updater installs from.
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+      - '[0-9]*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag matches the plugin version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          header="$(sed -n 's/^ \* Version:[[:space:]]*//p' hzf-updater.php | head -n1 | tr -d '[:space:]')"
+          if [ "$tag" != "$header" ]; then
+            echo "::error::Tag '$GITHUB_REF_NAME' does not match the plugin header Version '$header'."
+            exit 1
+          fi
+
+      - name: Build hzf-updater.zip (top-level folder is the slug)
+        run: |
+          mkdir -p build/hzf-updater
+          cp -r hzf-updater.php uninstall.php includes languages build/hzf-updater/
+          (cd build && zip -qr ../hzf-updater.zip hzf-updater)
+          unzip -l hzf-updater.zip
+
+      - name: Release notes from CHANGELOG.md
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          awk -v v="$tag" '$0 ~ "^## \\[?" v "\\]?([ ]|$)" {f=1; next} /^## / {f=0} f' CHANGELOG.md > notes.md
+          [ -s notes.md ] || echo "Release $tag" > notes.md
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" hzf-updater.zip --title "$GITHUB_REF_NAME" --notes-file notes.md
