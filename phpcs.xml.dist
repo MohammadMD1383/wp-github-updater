@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ruleset name="HZF Updater">
+	<description>WordPress Coding Standards for HZF Updater.</description>
+	<file>.</file>
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/tests/*</exclude-pattern>
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="ps"/>
+	<config name="minimum_wp_version" value="6.1"/>
+	<config name="testVersion" value="7.4-"/>
+	<rule ref="WordPress"/>
+	<rule ref="PHPCompatibilityWP"/>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array"><element value="hzf-updater"/></property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array"><element value="hzf_updater"/><element value="HZF_Updater"/><element value="HZF_UPDATER"/></property>
+		</properties>
+	</rule>
+</ruleset>

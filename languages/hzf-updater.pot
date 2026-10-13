@@ -1,0 +1,101 @@
+# HZF Updater translation template.
+# This file is distributed under the same license as the HZF Updater package.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: HZF Updater 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-13 12:08+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/class-hzf-updater-admin.php:39
+#: includes/class-hzf-updater-admin.php:90
+msgid "HZF Updater"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:53
+#: includes/class-hzf-updater-admin.php:88
+msgid "Sorry, you are not allowed to do this."
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:69
+msgid ""
+"HZF Updater: the HZF_UPDATER_GITHUB_TOKEN constant is not defined in wp-"
+"config.php, so private GitHub releases cannot be checked."
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:73
+msgid ""
+"HZF Updater: GitHub rejected the access token (HTTP 401/403). It may have "
+"expired or lack read access to the repository contents."
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:79
+msgid "Details"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:92
+msgid "Update check finished."
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:95
+msgid "Package"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:95
+msgid "Repository"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:95
+msgid "Installed"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:95
+msgid "Latest"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:95
+msgid "Last check"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:95
+msgid "Last error"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:100
+msgid "Token constant missing."
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:104
+msgid "plugin"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:104
+msgid "theme"
+msgstr ""
+
+#: includes/class-hzf-updater-admin.php:117
+msgid "Check now"
+msgstr ""
+
+#. translators: %d: HTTP status code.
+#: includes/class-hzf-updater.php:330
+#, php-format
+msgid "GitHub returned HTTP %d."
+msgstr ""
+
+#: includes/class-hzf-updater.php:338
+msgid ""
+"The latest release is a draft, a prerelease or has no usable version tag."
+msgstr ""
+
+#: includes/class-hzf-updater.php:511
+msgid "Could not rename the extracted package folder."
+msgstr ""
