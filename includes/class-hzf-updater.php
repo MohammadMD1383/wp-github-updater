@@ -195,7 +195,7 @@ final class HZF_Updater {
 		if ( $is_theme ) {
 			$out['theme'] = $id;
 		}
-		$asset = isset( $rel['assets'][ $slug . '.zip' ] ) ? $rel['assets'][ $slug . '.zip' ] : 0;
+		$asset = self::asset_id( $rel, $slug );
 		if ( $asset && version_compare( $rel['version'], $data['Version'], '>' ) ) {
 			$out['version'] = $rel['version'];
 			$out['package'] = self::asset_url( $repo, $asset );
@@ -211,6 +211,22 @@ final class HZF_Updater {
 			}
 		}
 		return $out;
+	}
+
+	/**
+	 * Id of the release asset `<slug>.zip` or `<slug>-<version>.zip`, else 0.
+	 *
+	 * @param array  $rel  Release data.
+	 * @param string $slug Package slug.
+	 * @return int
+	 */
+	private static function asset_id( $rel, $slug ) {
+		foreach ( array( $slug . '.zip', $slug . '-' . $rel['version'] . '.zip' ) as $name ) {
+			if ( ! empty( $rel['assets'][ $name ] ) ) {
+				return (int) $rel['assets'][ $name ];
+			}
+		}
+		return 0;
 	}
 
 	/**
@@ -607,7 +623,7 @@ final class HZF_Updater {
 	 */
 	private static function info( $row ) {
 		$rel   = self::release( $row['repo'] );
-		$asset = ! empty( $rel['assets'][ $row['slug'] . '.zip' ] ) ? $rel['assets'][ $row['slug'] . '.zip' ] : 0;
+		$asset = $rel ? self::asset_id( $rel, $row['slug'] ) : 0;
 		return (object) array(
 			'name'          => $row['name'],
 			'slug'          => $row['slug'],

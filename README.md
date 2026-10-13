@@ -44,7 +44,8 @@ WordPress 6.1+ and PHP 7.4+. No Composer runtime dependencies.
 ## Release convention
 
 - **Tag = version**, with or without a leading `v` (`v1.7.0` or `1.7.0`).
-- Each release has a ZIP **asset** named `<slug>.zip` whose top-level folder is
+- Each release has a ZIP **asset** named `<slug>.zip` or `<slug>-<version>.zip`
+  (e.g. `bitycle-integration-1.7.0.zip`) whose top-level folder is
   the slug (plugin folder / theme folder). GitHub's auto-generated source
   zipball is never used (its folder name is wrong).
 - Drafts and prereleases are ignored. The release body (Markdown) is shown
